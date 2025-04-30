@@ -1,3 +1,4 @@
+
 import * as vscode from 'vscode';
 import * as commands from './app/src/services/Commands';
 import * as extensionCommands from "../commands/constants";
@@ -10,6 +11,7 @@ import { CampaignConfigurationService } from '../services/CampaignConfigurationS
 import { CampaignsTreeItem } from '../models/ISCTreeItem';
 import { BulkCampaignManagerEscalation } from './BulkCampaignManagerEscalation';
 import { IdentityCertificationDto } from 'sailpoint-api-client';
+import { BulkCertificationDecision } from './BulkCertificationDecision';
 
 function getWebviewOptions(extensionUri: vscode.Uri): vscode.WebviewOptions {
     return {
@@ -195,6 +197,33 @@ export class CampaignPanel {
                     const campaign = await client.getCampaign(payload)
                     this._panel.webview.postMessage({ command, requestId, payload: campaign.status });
                     return;
+
+                    case commands.BULK_DECISION:
+                        const bulkDecision = new BulkCertificationDecision(client);
+                        try {
+                            const report = await bulkDecision.processBulkDecision(
+                                payload.certificationId,
+                                payload.decision,
+                                payload.comment
+                            );
+                            
+                            if (report.error > 0) {
+                                vscode.window.showErrorMessage(
+                                    `Bulk decision completed with errors: ${report.success} successful, ${report.error} failed`
+                                );
+                                console.error('Bulk decision errors:', report.errorMessages);
+                            } else {
+                                vscode.window.showInformationMessage(
+                                    `Successfully processed ${report.success} decisions`
+                                );
+                            }
+                            
+                        
+                        } catch (error) {
+                            const errorMessage = error instanceof Error ? error.message : String(error);
+                            vscode.window.showErrorMessage(`Failed to process bulk decisions: ${errorMessage}`);
+                        }
+                        return;
 
             }
         },

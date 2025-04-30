@@ -1,11 +1,18 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  //@ts-ignore
   import RowsPerPage from "./RowsPerPage.svelte";
+  //@ts-ignore
   import Pagination from "./Pagination.svelte";
+  //@ts-ignore
   import Refresh from "./svgs/refresh.svelte";
+  //@ts-ignore
   import UpDown from "./svgs/caret-up-down.svelte";
+  //@ts-ignore
   import Up from "./svgs/caret-up.svelte";
+  //@ts-ignore
   import Down from "./svgs/caret-down.svelte";
+  //@ts-ignore
   import SelectColumn from "./SelectColumn.svelte";
   import type {
     FetchOptions,
@@ -22,6 +29,7 @@
     multiSelectActions: MultiSelectAction<any>[];
     actions: Action<any>[];
     noDataLabel?: string;
+    selectedRows?: any[];
   }
   let {
     columns = $bindable(),
@@ -29,6 +37,7 @@
     multiSelectActions = [],
     actions = [],
     noDataLabel = "No Data",
+    selectedRows = $bindable([]),
   }: Props = $props();
 
   let loading = $state(true);
@@ -38,7 +47,6 @@
   let totalResults = $state(0);
   let sort: undefined | SortingOptions = $state();
   let fetchOptions: FetchOptions = $derived({ currentPage, pageSize, sort });
-  let selectedRows: any[] = $state([]);
   let hasSelection: boolean = $derived(selectedRows.length > 0);
   let hasMultiSelectActions: boolean = $derived(multiSelectActions.length > 0);
   let isAllSelected: boolean = $derived(selectedRows.length === data.length);

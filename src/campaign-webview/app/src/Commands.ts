@@ -1,0 +1,1 @@
+export const BULK_DECISION = 'bulk-decision'; 

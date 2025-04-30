@@ -1,0 +1,1 @@
+export type { IdentityCertificationDto } from 'sailpoint-api-client'; 
