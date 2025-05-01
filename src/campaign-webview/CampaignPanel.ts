@@ -204,10 +204,7 @@ export class CampaignPanel {
                 case commands.BULK_DECISION:
                     const bulkDecision = new BulkCertificationDecision(client);
                     try {
-                        const report = await bulkDecision.processBulkDecision(this.campaignId,
-                            this.campaignName,
-                            payload as IdentityCertificationDto[]
-                        );
+                        const report = await bulkDecision.processBulkDecision(payload as IdentityCertificationDto[]);
                         if (report.error > 0) {
                             vscode.window.showErrorMessage(
                                 `Bulk decision completed with errors: ${report.success} successful, ${report.error} failed`

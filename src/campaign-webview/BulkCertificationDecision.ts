@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { CertificationsApiMakeIdentityDecisionRequest, IdentityCertificationDto, AccessReviewItem, ReviewDecision, CertificationDecision } from "sailpoint-api-client";
 import { ISCClient } from "../services/ISCClient";
 
-const DECIDE_CERTIFICATION_ITEM_LIMIT = 50;
+const DECIDE_CERTIFICATION_ITEM_LIMIT = 500;
 
 export interface DecisionReport {
     success: number;
@@ -14,8 +14,6 @@ export class BulkCertificationDecision {
     constructor(private readonly client: ISCClient) { }
 
     async processBulkDecision(
-        campaignId: string,
-        campaignName: string,
         certifications: IdentityCertificationDto[]
     ): Promise<DecisionReport> {
         const report: DecisionReport = {

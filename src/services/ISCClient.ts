@@ -2,7 +2,6 @@
 import * as vscode from "vscode";
 import * as os from 'os';
 import * as fs from 'fs';
-import { File } from 'node:buffer';
 import { EndpointUtils } from "../utils/EndpointUtils";
 import { SailPointISCAuthenticationProvider } from "./AuthenticationProvider";
 import { compareByName, convertToText } from "../utils";
