@@ -45,6 +45,15 @@ export class VsCodeClient implements Client {
         await messageHandler.request(commands.SEND_REMINDERS, snapshot);
     }
 
+    async bulkDecide(r: Reviewer[]): Promise<void> {
+        console.log("> VsCodeClient.bulkDecide");
+        // Reviewer is a proxy, as reactive svelte object.
+        // Create a snapshot for cloning
+        const snapshot = $state.snapshot(r)
+        console.log(snapshot);
+        await messageHandler.request(commands.BULK_DECISION, snapshot);
+    }
+
     /**
      * explicitly returning a Promise because used by "await"
      * @returns Promise
@@ -57,7 +66,7 @@ export class VsCodeClient implements Client {
             return Promise.resolve(tmpstate.kpis as KPIs);
         }
         const thiz = this;
-        
+
         return messageHandler.request<KPIs>(commands.GET_KPIS_AND_REVIEWERS).then(
             (values) => {
                 thiz.state.kpis = values
@@ -65,14 +74,14 @@ export class VsCodeClient implements Client {
                 return values
             }
         )
-        
+
     }
-    
+
     /**
      * explicitly returning a Promise because used by "await"
      * @returns Promise
     */
-   async getReviewers(fetchOptions: FetchOptions, force: boolean): Promise<PaginatedData<Reviewer>> {
+    async getReviewers(fetchOptions: FetchOptions, force: boolean): Promise<PaginatedData<Reviewer>> {
         console.log("> VsCodeClient.getReviewers");
         const tmpstate = Messenger.getState() as State
         if (tmpstate?.reviewers !== undefined

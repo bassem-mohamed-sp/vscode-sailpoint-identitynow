@@ -173,6 +173,7 @@ export class CampaignPanel {
 
                     this._panel.webview.postMessage({ command, requestId, payload: { data: reviewers, count: response.count } as PaginatedData<Reviewer> });
                     return;
+
                 case commands.SEND_REMINDERS:
                     const info = await campaignService.getCertificationCampaignInfo(this.tenantName)
                     if (info === undefined) {
@@ -186,6 +187,7 @@ export class CampaignPanel {
                         client)
                     await sender.call(payload)
                     return;
+
                 case commands.ESCALATE_REVIEWERS:
                     const bulkManagerEscalator = new BulkCampaignManagerEscalation(client)
                     await bulkManagerEscalator.escalateCertifications(this.campaignId,
@@ -193,38 +195,34 @@ export class CampaignPanel {
                         payload as IdentityCertificationDto[])
                     this._panel.webview.postMessage({ command, requestId, payload: { data: "OK" } });
                     return;
+
                 case commands.GET_STATUS:
                     const campaign = await client.getCampaign(payload)
                     this._panel.webview.postMessage({ command, requestId, payload: campaign.status });
                     return;
 
-                    case commands.BULK_DECISION:
-                        const bulkDecision = new BulkCertificationDecision(client);
-                        try {
-                            const report = await bulkDecision.processBulkDecision(
-                                payload.certificationId,
-                                payload.decision,
-                                payload.comment
+                case commands.BULK_DECISION:
+                    const bulkDecision = new BulkCertificationDecision(client);
+                    try {
+                        const report = await bulkDecision.processBulkDecision(this.campaignId,
+                            this.campaignName,
+                            payload as IdentityCertificationDto[]
+                        );
+                        if (report.error > 0) {
+                            vscode.window.showErrorMessage(
+                                `Bulk decision completed with errors: ${report.success} successful, ${report.error} failed`
                             );
-                            
-                            if (report.error > 0) {
-                                vscode.window.showErrorMessage(
-                                    `Bulk decision completed with errors: ${report.success} successful, ${report.error} failed`
-                                );
-                                console.error('Bulk decision errors:', report.errorMessages);
-                            } else {
-                                vscode.window.showInformationMessage(
-                                    `Successfully processed ${report.success} decisions`
-                                );
-                            }
-                            
-                        
-                        } catch (error) {
-                            const errorMessage = error instanceof Error ? error.message : String(error);
-                            vscode.window.showErrorMessage(`Failed to process bulk decisions: ${errorMessage}`);
+                            console.error('Bulk decision errors:', report.errorMessages);
+                        } else {
+                            vscode.window.showInformationMessage(
+                                `Successfully processed ${report.success} decisions`
+                            );
                         }
-                        return;
-
+                    } catch (error) {
+                        const errorMessage = error instanceof Error ? error.message : String(error);
+                        vscode.window.showErrorMessage(`Failed to process bulk decisions: ${errorMessage}`);
+                    }
+                    return;
             }
         },
             null,

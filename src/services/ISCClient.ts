@@ -1824,14 +1824,14 @@ export class ISCClient {
 		return resp.data
 	}
 
-	public async certificationDecision(CertificationsApiMakeIdentityDecisionRequest: CertificationsApiMakeIdentityDecisionRequest): Promise<{ IdentityCertificationDto: IdentityCertificationDto }> {
-        const apiConfig = await this.getApiConfiguration();
-        const certificationsApi = new CertificationsApi(apiConfig, undefined, this.getAxiosWithInterceptors())
-        const resp = await certificationsApi.makeIdentityDecision(CertificationsApiMakeIdentityDecisionRequest)
-        return {
-            IdentityCertificationDto: resp.data
-        }
-    }
+	public async decideCertificationItems(certificationsApiMakeIdentityDecisionRequest: CertificationsApiMakeIdentityDecisionRequest): Promise<{ IdentityCertificationDto: IdentityCertificationDto }> {
+		const apiConfig = await this.getApiConfiguration();
+		const certificationsApi = new CertificationsApi(apiConfig, undefined, this.getAxiosWithInterceptors())
+		const resp = await certificationsApi.makeIdentityDecision(certificationsApiMakeIdentityDecisionRequest)
+		return {
+			IdentityCertificationDto: resp.data
+		}
+	}
 
 	//////////////////////////////
 	//#endregion Certification Campaigns
